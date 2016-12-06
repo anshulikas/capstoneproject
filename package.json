@@ -1,0 +1,25 @@
+{
+  "name": "capstoneproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anshulikas/capstoneproject.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anshulikas/capstoneproject/issues"
+  },
+  "homepage": "https://github.com/anshulikas/capstoneproject#readme",
+  "devDependencies": {
+    "bluebird": "^3.4.6",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "nodemon": "^1.11.0"
+  }
+}
