@@ -8,15 +8,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/', express.static('www'));
-
+app.use('/graph_files', express.static('graph_files'));
 app.use('/api', filesApi);
 
-
-
-/*router.route('/getfiles')
-	.post((req, res) => {
-		res.json({success: true});
-	} );*/
 
 app.set('port', process.env.PORT || 5000);
 

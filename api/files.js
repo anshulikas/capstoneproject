@@ -8,13 +8,15 @@ var util = require('../lib/util');
 router.route('/getfiles/:date')
 	.post((req, res) => {
 		var folderName = util.convertDateToDOY(req.params.date);
-		folderName = path.resolve('.', 'graph_files', folderName);
 
-		readDir(folderName)
+		var resolvedFolderName = path.resolve('.', 'graph_files', folderName);
+
+		readDir(resolvedFolderName)
 			.then(function(files) {
 				res.json({
 					success: true,
-					files: files
+					files: files,
+					dir: folderName
 				});
 			}).catch(function(err) {
 				res.json({

@@ -1,86 +1,129 @@
-
 <html>
+
 <head>
     <title>Explore the Data</title>
+    <style>
+        body {
+            background-color: chocolate;
+        }
+
+        h1 {
+            padding: 10px;
+            border-bottom: 1px solid black;
+        }
+
+        div.container {
+            border: 1px solid black;
+            background-color: lightblue;
+            padding-top: 100px;
+            padding-right: 100px;
+            padding-bottom: 100px;
+            padding-left: 100px;
+        }
+
+        .show-file select {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        p.outset {
+            outline-style: outset;
+        }
+
+        div.container {
+            background-color: white;
+            width: 300px;
+            border: 25px orange;
+            padding: 25px;
+            margin: 25px;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.5.1/css/pikaday.min.css">
 </head>
 
-
-<h1>Explore the Data!</h1>
-<p><Explore Data </a></p>
-
-<style>
-
-body {
-    background-color: chocolate;
-}
-
-div {
-    border: 1px solid black;
-    background-color: lightblue;
-    padding-top: 100px;
-    padding-right: 100px;
-    padding-bottom: 100px;
-    padding-left: 100px;
-}
-
-p {
-    border: 1px solid black;
-    outline-color:red;
-}p.outset {outline-style: outset;}
-
-div {
-    background-color: white;
-    width: 300px;
-    border: 25px orange;
-    padding: 25px;
-    margin: 25px;
-}
+<body>
+    <h1>Explore the Data!</h1>
 
 
+    <div class="container">
 
-</style>
+        <form class="get-files" action="/api/getfiles" method="POST">
+            <input type="text" name="date" class="datepicker" autocomplete="false" placeholder="MM-DD-YYYY">
+            <input type="submit" value="Submit">
+        </form>
 
-<div>
+        <form class="show-file" >
+            <select class="js-page-list">
+             <option value="disabled">Select</option>
+            </select>
+            <input type="submit" value="Submit">
+        </form>
 
-<select>
-  <option value="1">1</option>
-  <option value="2">2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-</select>
+        <p class="error">
 
-<select>
-  <option value="Jan">Jan</option>
-  <option value="Feb">Feb</option>
-  <option value="Mar">Mar</option>
-  <option value="Apr">Apr</option>
-</select>
+        </p>
 
-<select>
-  <option value="2002">2002</option>
-  <option value="2003">2003</option>
-  <option value="2004">2004</option>
-  <option value="2005">2005</option>
-</select>
+    </div>
 
-<form action="action_page.php">
-<br>
-  <input type="submit" value="Submit"> <br>
-</form>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.5.1/pikaday.min.js"></script>
+    <script>
+        var picker = new Pikaday({
+            field: document.getElementsByClassName('datepicker')[0],
+            yearRange: 50,
+            format: 'MM-DD-YYYY'
+        });
 
-<select>
-  <option value="GRC-A Convergence DDRMS (m)">GRC-A Convergence DDRMS (m)</option>
-  <option value="GRC-A and GRC-B Convergence DDRMS (m)">GRC-A and GRC-B Convergence DDRMS (m)</option>
-  <option value="Preliminary GRACE Orbit Report">Preliminary GRACE Orbit Report</option>
-</select>
 
-<form action="action_page.php">
-<br>
-  <input type="submit" value="Submit"> <br>
-</form>
+        $('.get-files').submit(function(evt){
+            evt.preventDefault();
+            var date = $(this).find('[name=date]').val();
 
-</div>
+            if (new Date(date) == 'Invalid Date') {
+                showError('Invalid date entered');
+            } else {
+                $.post('/api/getfiles/' + date , showFiles);
+            }
+        });
 
+        $('.show-file').submit( function(evt) {
+            evt.preventDefault();
+            if($('.js-page-list').val() !== 'disabled') {
+                hideError();
+                window.open('/graph_files/' + $('.js-page-list').val());
+            } else {
+                showError('Please select graph from list.');
+            }
+        });
+
+        function showFiles( response ) {
+            if(response.success) {
+                hideError();
+                var files = response.files;
+                $('.js-page-list').find("option[value!='disabled']").remove();
+                files.forEach( function(ele) {
+                    var option = $("<option>" + ele + "</option>").val( response.dir + '/' + ele);
+                    $('.js-page-list').append(option);
+                });
+            } else {
+                $('.js-page-list').find("option[value!='disabled']").remove();
+                showError('No graph exists');
+            }
+        };
+
+        function hideError() {
+            $('.error').hide();
+        }
+
+        function showError( error ) {
+            $('.error').html(error).show();
+        }
+    </script>
 </body>
-</html>
 
+</html>
